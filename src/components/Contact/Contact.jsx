@@ -33,11 +33,11 @@ const sanitizeString = (str) => {
   if (typeof str !== 'string') return '';
   // Remove HTML tags, script injections, and other unsafe content
   return str
-    .replace(/<[^>]*>/g, '')s
+    .replace(/<[^>]*>/g, '')
     .replace(/[<>]/g, '')
     .replace(/javascript:/gi, '')
     .replace(/on\w+=/gi, '')
-    .trim();
+    .trim()
 };
 
  
@@ -46,6 +46,7 @@ const Contact = () => {
   const [emailValue, setEmailValue] = useState('');
   const [subjectValue, setSubjectValue] = useState('');
   const [messageValue, setMessageValue] = useState('');
+  const [errors, setErrors] = useState({});
 
   const PUBLIC_KEY = import.meta.env.VITE_PUBLIC_KEY;
   const TEMPLATE_KEY = import.meta.env.VITE_TEMPLATE_CONTACT_KEY;
@@ -81,16 +82,24 @@ const Contact = () => {
   };
   const handleMessageChange = (e) => {
     const sanitized = sanitizeString(e.target.value);
-    setSubjectValue(sanitized);
-    if (sanitized && !validateSubject(sanitized)) {
-      setErrors(prev => ({ ...prev, subject: 'Subject must be 100 characters or less' }));
+    setMessageValue(sanitized);
+    if (sanitized && !validateMessage(sanitized)) {
+      setErrors(prev => ({ ...prev, message: 'Message must be 1000 characters or less' }));
     } else {
-      setErrors(prev => ({ ...prev, subject: '' }));
+      setErrors(prev => ({ ...prev, message: '' }));
     }
   };
   
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // Simple rate limiting to prevent spam - one submit per 30 seconds
+    const lastSubmission = localStorage.getItem('lastContactSubmission');
+    const now = Date.now();
+    if (lastSubmission && (now - parseInt(lastSubmission)) < 30000) {
+      toast.error('Please wait a moment before submitting another message.');
+      return;
+    }
 
     const isNameValid = validateName(nameValue);
     const isEmailValid = validateEmail(emailValue);
@@ -119,6 +128,8 @@ const Contact = () => {
         setEmailValue('');
         setSubjectValue('');
         setMessageValue('');
+        setErrors({});
+        localStorage.setItem('lastContactSubmission', now.toString());
         console.log(result.text);
         toast.success('Success! Please check your email.');
       },
