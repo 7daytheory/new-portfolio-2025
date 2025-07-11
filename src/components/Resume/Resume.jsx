@@ -66,7 +66,7 @@ import { resume } from '../../content';
                     <div className="-mt-1 font-sans text-sm font-semibold">Via an API</div>
                 </div>
             </a> */}
-            <a href={{MyResume}} id="pdfResume" download="Lowe, Matthew Resume" className="w-full inline sm:w-auto bg-slate-800 hover:bg-slate-700 focus:ring-4 focus:outline-none focus:ring-gray-300 text-white rounded-lg shadow-[0px_0px_5px_0px_rgba(255,255,255,0.25)] inline-flex items-center justify-center px-4 py-2.5 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700">
+            <a href={MyResume} id="pdfResume" download="Lowe, Matthew Resume" className="w-full inline sm:w-auto bg-slate-800 hover:bg-slate-700 focus:ring-4 focus:outline-none focus:ring-gray-300 text-white rounded-lg shadow-[0px_0px_5px_0px_rgba(255,255,255,0.25)] inline-flex items-center justify-center px-4 py-2.5 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700">
                 <img
                     src={pdfLogo} 
                     alt="Pdf Logo" 
