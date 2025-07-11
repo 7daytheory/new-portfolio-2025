@@ -28,6 +28,18 @@ const validateMessage = (message) => {
   return message.length <= 1000;
 };
 
+// Sanitization utility function
+const sanitizeString = (str) => {
+  if (typeof str !== 'string') return '';
+  // Remove HTML tags and dangerous characters
+  return str
+    .replace(/<[^>]*>/g, '') // Remove HTML tags
+    .replace(/[<>]/g, '') // Remove remaining < and >
+    .replace(/javascript:/gi, '') // Remove javascript: protocol
+    .replace(/on\w+=/gi, '') // Remove event handlers
+    .trim();
+};
+
  
 const Contact = () => {
   const [nameValue, setNameValue] = useState('');
@@ -38,6 +50,20 @@ const Contact = () => {
   const PUBLIC_KEY = import.meta.env.VITE_PUBLIC_KEY;
   const TEMPLATE_KEY = import.meta.env.VITE_TEMPLATE_CONTACT_KEY;
   const SERVICE_KEY = import.meta.env.VITE_SERVICE_KEY;
+
+    // Sanitized input handlers
+  const handleNameChange = (e) => {
+    setNameValue(sanitizeString(e.target.value));
+  };
+  const handleEmailChange = (e) => {
+    setEmailValue(sanitizeString(e.target.value));
+  };
+  const handleSubjectChange = (e) => {
+    setSubjectValue(sanitizeString(e.target.value));
+  };
+  const handleMessageChange = (e) => {
+    setMessageValue(sanitizeString(e.target.value));
+  };
   
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -96,7 +122,7 @@ const Contact = () => {
                 type="text"
                 name="name"
                 value={nameValue}
-                onChange={(e) => setNameValue(e.target.value)}
+                onChange={handleNameChange}
                 placeholder=" "
                 required
                 className="pt-3 pb-2 block w-full md:w-3/4 px-0 mt-0 bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-black border-gray-200"
@@ -109,7 +135,7 @@ const Contact = () => {
                 type="email"
                 name="email"
                 value={emailValue}
-                onChange={(e) => setEmailValue(e.target.value)}
+                onChange={handleEmailChange}
                 placeholder=" "
                 required
                 className="pt-3 pb-2 block w-full md:w-3/4 px-0 mt-0 bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-black border-gray-200"
@@ -122,7 +148,7 @@ const Contact = () => {
                 type="text"
                 name="subject"
                 value={subjectValue}
-                onChange={(e) => setSubjectValue(e.target.value)}
+                onChange={handleSubjectChange}
                 placeholder=" "
                 required
                 className="pt-3 pb-2 block w-full md:w-3/4 px-0 mt-0 bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-black border-gray-200"
@@ -134,7 +160,7 @@ const Contact = () => {
               <textarea
                 name="message"
                 value={messageValue}
-                onChange={(e) => setMessageValue(e.target.value)}
+                onChange={handleMessageChange}
                 placeholder=" "
                 rows="5"
                 required
