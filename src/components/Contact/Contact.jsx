@@ -5,8 +5,29 @@ import { Fade } from 'react-awesome-reveal';
 import emailjs from 'emailjs-com';
 import { toast } from 'react-toastify';
 import ClimbingPhoto from '../../assets/climbing-photo.jpg';
-import './Contact.css'
+import './Contact.css';
 import { contact, about } from '../../content';
+
+// Validation functions 
+const validateEmail = (email) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+
+const validateName = (name) => {
+  // Allow letters, spaces, hyphens, apostrophes, and periods
+  const nameRegex = /^[a-zA-Z\s\-'\.]+$/;
+  return nameRegex.test(name) && name.length >= 2 && name.length <= 50;
+};
+
+const validateSubject = (subject) => {
+  return subject.length <= 100;
+};
+
+const validateMessage = (message) => {
+  return message.length <= 1000;
+};
+
  
 const Contact = () => {
   const [nameValue, setNameValue] = useState('');
@@ -20,6 +41,16 @@ const Contact = () => {
   
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    const isNameValid = validateName(nameValue);
+    const isEmailValid = validateEmail(emailValue);
+    const isSubjectValid = validateSubject(subjectValue);
+    const isMessageValid = validateMessage(messageValue);
+
+    if (!isNameValid || !isEmailValid || !isSubjectValid || !isMessageValid) {
+      toast.error('Please fix the errors in the form before submitting.');
+      return;
+    }
   
     //Email Params
     const emailParams = {
@@ -93,6 +124,7 @@ const Contact = () => {
                 value={subjectValue}
                 onChange={(e) => setSubjectValue(e.target.value)}
                 placeholder=" "
+                required
                 className="pt-3 pb-2 block w-full md:w-3/4 px-0 mt-0 bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-black border-gray-200"
               />
               <label htmlFor="subject" className="absolute duration-300 top-3 -z-1 origin-0 text-gray-500">{contactSubject}</label>
@@ -105,6 +137,7 @@ const Contact = () => {
                 onChange={(e) => setMessageValue(e.target.value)}
                 placeholder=" "
                 rows="5"
+                required
                 className="pt-3 pb-2 block w-full md:w-3/4 px-0 mt-0 bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-black border-gray-200"
               />
               <label htmlFor="message" className="absolute duration-300 top-3 -z-1 origin-0 text-gray-500">{contactBody}</label>
