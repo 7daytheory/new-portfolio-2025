@@ -160,6 +160,7 @@ const Contact = () => {
                 onChange={handleNameChange}
                 placeholder=" "
                 required
+                maxLength={50}
                 className="pt-3 pb-2 block w-full md:w-3/4 px-0 mt-0 bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-black border-gray-200"
               />
               <label htmlFor="name" className="absolute duration-300 top-3 -z-1 origin-0 text-gray-500">{contactName}</label>
@@ -174,6 +175,7 @@ const Contact = () => {
                 onChange={handleEmailChange}
                 placeholder=" "
                 required
+                maxLength={254}
                 className="pt-3 pb-2 block w-full md:w-3/4 px-0 mt-0 bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-black border-gray-200"
               />
               <label htmlFor="email" className="absolute duration-300 top-3 -z-1 origin-0 text-gray-500">{contactEmail}</label>
@@ -188,6 +190,7 @@ const Contact = () => {
                 onChange={handleSubjectChange}
                 placeholder=" "
                 required
+                maxLength={100}
                 className="pt-3 pb-2 block w-full md:w-3/4 px-0 mt-0 bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-black border-gray-200"
               />
               <label htmlFor="subject" className="absolute duration-300 top-3 -z-1 origin-0 text-gray-500">{contactSubject}</label>
@@ -202,6 +205,7 @@ const Contact = () => {
                 placeholder=" "
                 rows="5"
                 required
+                maxLength={1000}
                 className="pt-3 pb-2 block w-full md:w-3/4 px-0 mt-0 bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-black border-gray-200"
               />
               <label htmlFor="message" className="absolute duration-300 top-3 -z-1 origin-0 text-gray-500">{contactBody}</label>
