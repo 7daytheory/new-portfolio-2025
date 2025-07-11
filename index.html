@@ -4,6 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-Frame-Options" content="DENY">
+    
+    <!-- Smart frame-busting - only breaks out of malicious iframes -->
+    <script>
+      if (top !== window) {
+        top.location = window.location;
+      }
+    </script>
+    
     <title>Matthew - Developer</title>
     <meta name="title" content="Matthew Lowe - Developer">
     <meta name="description" content="Showcasing the work and career of Matthew Lowe, a software developer with 10 years experience in the field.">
