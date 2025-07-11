@@ -5,21 +5,111 @@ import { Fade } from 'react-awesome-reveal';
 import emailjs from 'emailjs-com';
 import { toast } from 'react-toastify';
 import ClimbingPhoto from '../../assets/climbing-photo.jpg';
-import './Contact.css'
+import './Contact.css';
 import { contact, about } from '../../content';
+
+// Validation functions 
+const validateEmail = (email) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+
+const validateName = (name) => {
+  // Allow only letters, spaces, hyphens, apostrophes, and periods
+  const nameRegex = /^[a-zA-Z\s\-'\.]+$/;
+  return nameRegex.test(name) && name.length >= 2 && name.length <= 50;
+};
+
+const validateSubject = (subject) => {
+  return subject.length <= 100;
+};
+
+const validateMessage = (message) => {
+  return message.length <= 1000;
+};
+
+// Sanitization utility function
+const sanitizeString = (str) => {
+  if (typeof str !== 'string') return '';
+  // Remove HTML tags, script injections, and other unsafe content
+  return str
+    .replace(/<[^>]*>/g, '')
+    .replace(/[<>]/g, '')
+    .replace(/javascript:/gi, '')
+    .replace(/on\w+=/gi, '')
+    .trim()
+};
+
  
 const Contact = () => {
   const [nameValue, setNameValue] = useState('');
   const [emailValue, setEmailValue] = useState('');
   const [subjectValue, setSubjectValue] = useState('');
   const [messageValue, setMessageValue] = useState('');
+  const [errors, setErrors] = useState({});
 
   const PUBLIC_KEY = import.meta.env.VITE_PUBLIC_KEY;
   const TEMPLATE_KEY = import.meta.env.VITE_TEMPLATE_CONTACT_KEY;
   const SERVICE_KEY = import.meta.env.VITE_SERVICE_KEY;
+
+    // Sanitized input handlers
+  const handleNameChange = (e) => {
+    const sanitized = sanitizeString(e.target.value);
+    setNameValue(sanitized);
+    if (sanitized && !validateName(sanitized)) {
+      setErrors(prev => ({ ...prev, name: 'Please enter a valid name (letters, spaces, hyphens, apostrophes only)' }));
+    } else {
+      setErrors(prev => ({ ...prev, name: '' }));
+    }
+  };
+  const handleEmailChange = (e) => {
+    const sanitized = sanitizeString(e.target.value);
+    setEmailValue(sanitized);
+    if (sanitized && !validateEmail(sanitized)) {
+      setErrors(prev => ({ ...prev, email: 'Please enter a valid email address' }));
+    } else {
+      setErrors(prev => ({ ...prev, email: '' }));
+    }
+  };
+  const handleSubjectChange = (e) => {
+    const sanitized = sanitizeString(e.target.value);
+    setSubjectValue(sanitized);
+    if (sanitized && !validateSubject(sanitized)) {
+      setErrors(prev => ({ ...prev, subject: 'Subject must be 100 characters or less' }));
+    } else {
+      setErrors(prev => ({ ...prev, subject: '' }));
+    }
+  };
+  const handleMessageChange = (e) => {
+    const sanitized = sanitizeString(e.target.value);
+    setMessageValue(sanitized);
+    if (sanitized && !validateMessage(sanitized)) {
+      setErrors(prev => ({ ...prev, message: 'Message must be 1000 characters or less' }));
+    } else {
+      setErrors(prev => ({ ...prev, message: '' }));
+    }
+  };
   
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    // Simple rate limiting to prevent spam - one submit per 30 seconds
+    const lastSubmission = localStorage.getItem('lastContactSubmission');
+    const now = Date.now();
+    if (lastSubmission && (now - parseInt(lastSubmission)) < 30000) {
+      toast.error('Please wait a moment before submitting another message.');
+      return;
+    }
+
+    const isNameValid = validateName(nameValue);
+    const isEmailValid = validateEmail(emailValue);
+    const isSubjectValid = validateSubject(subjectValue);
+    const isMessageValid = validateMessage(messageValue);
+
+    if (!isNameValid || !isEmailValid || !isSubjectValid || !isMessageValid) {
+      toast.error('Please fix the errors in the form before submitting.');
+      return;
+    }
   
     //Email Params
     const emailParams = {
@@ -38,6 +128,8 @@ const Contact = () => {
         setEmailValue('');
         setSubjectValue('');
         setMessageValue('');
+        setErrors({});
+        localStorage.setItem('lastContactSubmission', now.toString());
         console.log(result.text);
         toast.success('Success! Please check your email.');
       },
@@ -65,12 +157,14 @@ const Contact = () => {
                 type="text"
                 name="name"
                 value={nameValue}
-                onChange={(e) => setNameValue(e.target.value)}
+                onChange={handleNameChange}
                 placeholder=" "
                 required
+                maxLength={50}
                 className="pt-3 pb-2 block w-full md:w-3/4 px-0 mt-0 bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-black border-gray-200"
               />
               <label htmlFor="name" className="absolute duration-300 top-3 -z-1 origin-0 text-gray-500">{contactName}</label>
+              {errors.name && <div className="text-red-500 text-sm mt-1">{errors.name}</div>}
             </div>
 
             <div className="relative z-0 w-full mb-5">
@@ -78,12 +172,14 @@ const Contact = () => {
                 type="email"
                 name="email"
                 value={emailValue}
-                onChange={(e) => setEmailValue(e.target.value)}
+                onChange={handleEmailChange}
                 placeholder=" "
                 required
+                maxLength={254}
                 className="pt-3 pb-2 block w-full md:w-3/4 px-0 mt-0 bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-black border-gray-200"
               />
               <label htmlFor="email" className="absolute duration-300 top-3 -z-1 origin-0 text-gray-500">{contactEmail}</label>
+              {errors.email && <div className="text-red-500 text-sm mt-1">{errors.email}</div>}
             </div>
 
             <div className="relative z-0 w-full mb-5">
@@ -91,23 +187,29 @@ const Contact = () => {
                 type="text"
                 name="subject"
                 value={subjectValue}
-                onChange={(e) => setSubjectValue(e.target.value)}
+                onChange={handleSubjectChange}
                 placeholder=" "
+                required
+                maxLength={100}
                 className="pt-3 pb-2 block w-full md:w-3/4 px-0 mt-0 bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-black border-gray-200"
               />
               <label htmlFor="subject" className="absolute duration-300 top-3 -z-1 origin-0 text-gray-500">{contactSubject}</label>
+              {errors.subject && <div className="text-red-500 text-sm mt-1">{errors.subject}</div>}
             </div>
 
             <div className="relative z-0 w-full mb-5">
               <textarea
                 name="message"
                 value={messageValue}
-                onChange={(e) => setMessageValue(e.target.value)}
+                onChange={handleMessageChange}
                 placeholder=" "
                 rows="5"
+                required
+                maxLength={1000}
                 className="pt-3 pb-2 block w-full md:w-3/4 px-0 mt-0 bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-black border-gray-200"
               />
               <label htmlFor="message" className="absolute duration-300 top-3 -z-1 origin-0 text-gray-500">{contactBody}</label>
+              {errors.message && <div className="text-red-500 text-sm mt-1">{errors.message}</div>}
             </div>
 
             <div className="flex justify-end">
