@@ -7,7 +7,7 @@
     
     <!-- Smart frame-busting - only breaks out of malicious iframes -->
     <script>
-      if (top !== window) {
+      if (top !== window && top.location.hostname !== window.location.hostname) {
         top.location = window.location;
       }
     </script>
