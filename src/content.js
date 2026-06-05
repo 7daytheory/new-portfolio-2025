@@ -66,9 +66,23 @@ const experiences = {
   experiences: [
       {
       title: "Full Stack Developer",
+      company_name: "Exploitt",
+      iconBg: "#ff6347",
+      date: "2024 – 2025",
+      tasks: [
+        "Contributed full‑stack features for an AI-driven pentesting platform, building React front-end interfaces and Node.js backend services.",
+        "Extended platform capabilities by integrating Python and Rust components for AI pipelines and performance‑critical tooling.",
+        "Led performance and scalability improvements as the user base grew, improving system responsiveness and reliability.",
+        "Assumed de-facto technical lead responsibilities: coordinated cross-functional work, mentored teammates, and ran code reviews.",
+        "Improved code quality through targeted refactors and by introducing development best practices and testing workflows.",
+        "Received direct recognition from the CTO for driving key product milestones and accelerating team delivery."
+      ],
+    },
+      {
+      title: "Full Stack Developer",
       company_name: "Freelance",
       iconBg: "#ff6347",
-      date: "2024 - Current",
+      date: "2023 - Current",
       tasks: [
         "I was hired before I finished college and stared working the day after I graduated, I had never not been working full-time",
         "Gave myself a break to focus on myself, family, and health but I am now wxcited to be looking for new opportunities",
